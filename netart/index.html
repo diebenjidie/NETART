@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>INTERNUGS</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<link rel="stylesheet" href="css/netart.css">
+	</head>
+	<body>
+
+		<div id="info">
+			<button onclick ="newShape()"> NET ART </button>
+		</div>
+
+		<script src="js/three.min.js"></script>
+		<script src="js/Detector.js"></script>
+		<script>
+
+			if ( ! Detector.webgl ) Detector.addGetWebGLMessage();
+			
+			var camera, scene, renderer;
+			var geometry, material, mesh;
+
+			function random_int_within_range (min, max) {
+				return Math.floor(Math.random() * (max - min) + min)
+			}
+
+			function newShape () {
+
+				scene.remove(scene.children[0]) 
+
+				var points = [];
+
+				for (var i = 0; i < random_int_within_range(8, 50); i++) {
+					points.push(new THREE.Vector3( Math.random()*200-100, Math.random()*200-100, Math.random()*200-100 ))
+				};
+				
+				var imgs = [];
+				for (var i = 1; i < 40; i++) {
+  					imgs.push("imgs/" + i + ".jpeg");
+				};
+
+				var ranIdx = Math.floor(Math.random()*imgs.length);
+
+				map = THREE.ImageUtils.loadTexture(imgs[ranIdx]);
+				geometry = new THREE.ConvexGeometry( points );
+				material = new THREE.MeshBasicMaterial({shading: THREE.FlatShading, map: map, color:0xffffff});
+				mesh = new THREE.Mesh(geometry, material);
+				scene.add(mesh);
+
+			}
+
+
+			function setup () {
+
+				var W = window.innerWidth, H = window.innerHeight;
+				renderer = new THREE.WebGLRenderer();
+				renderer.setSize( W, H );
+				document.body.appendChild( renderer.domElement );
+
+				camera = new THREE.PerspectiveCamera( 50, W/H, 1, 10000 );
+				camera.position.z = 500;
+
+				scene = new THREE.Scene();
+
+				newShape();
+
+			}
+
+			function draw() {
+
+				requestAnimationFrame( draw );
+				
+				// experiment with code from the snippets menu here
+
+				renderer.render( scene, camera );
+
+			}
+
+			function exportToObj() {
+				var exporter = new THREE.OBJExporter();
+				var result = exporter.parse( scene );
+				floatingDiv.style.display = 'block';
+				floatingDiv.innerHTML = result.split( '\n' ).join ( '<br />' );
+			}
+
+			setup();
+			draw();
+
+		</script>
+		
+	</body>
+</html>
